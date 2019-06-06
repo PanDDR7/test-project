@@ -15,10 +15,12 @@ import java.util.Date;
 
 @Entity
 @Table(name = "product")
-public class User extends Model {
+public class Product extends Model {
     @Id
     @Column(name = "id")
     private int id;
+    @Column(name = "user_id")
+    private String userId;
     @Column(name = "name")
     private String name;
     @Column(name = "price")
@@ -29,13 +31,27 @@ public class User extends Model {
     @UpdatedTimestamp
     @Column(name = "modify_datetime")
     private Date modifyDatetime;
+    /*
     @Column(name = "account")
     private String account;
     @Column(name = "password")
     private String password;
 
-    public static User findUserById(int id) {
-        return Ebean.getServer("default").find(User.class).where().eq("id", id).findOne();
+     */
+
+    public Product(){
+
+    }
+
+    public Product(int inputID,String inputUserId,String inputName,int inputPrice){
+        this.id=inputID;
+        this.userId=inputUserId;
+        this.name=inputName;
+        this.price=inputPrice;
+    }
+
+    public static Product findProductById(int id) {
+        return Ebean.getServer("default").find(Product.class).where().eq("id", id).findOne();
     }
 
     public int getId() {
@@ -46,28 +62,26 @@ public class User extends Model {
         this.id = id;
     }
 
+    public String getUserId(){
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public String getName() {
         return name;
     }
 
+    /*
+    public String getAccount(){return account;}
+
+    public String getPassword(){return password;}
+     */
+
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getAccount() {
-        return account;
-    }
-
-    public void setAccount(String account) {
-        this.account = account;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public int getPrice() {
