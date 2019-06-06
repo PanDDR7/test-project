@@ -4,6 +4,7 @@ import io.ebean.Ebean;
 import io.ebean.Model;
 import io.ebean.annotation.CreatedTimestamp;
 import io.ebean.annotation.UpdatedTimestamp;
+import scala.concurrent.java8.FuturesConvertersImpl;
 
 
 import javax.persistence.Column;
@@ -18,6 +19,8 @@ public class Product extends Model {
     @Id
     @Column(name = "id")
     private int id;
+    @Column(name = "user_id")
+    private String userId;
     @Column(name = "name")
     private String name;
     @Column(name = "price")
@@ -28,6 +31,24 @@ public class Product extends Model {
     @UpdatedTimestamp
     @Column(name = "modify_datetime")
     private Date modifyDatetime;
+    /*
+    @Column(name = "account")
+    private String account;
+    @Column(name = "password")
+    private String password;
+
+     */
+
+    public Product(){
+
+    }
+
+    public Product(int inputID,String inputUserId,String inputName,int inputPrice){
+        this.id=inputID;
+        this.userId=inputUserId;
+        this.name=inputName;
+        this.price=inputPrice;
+    }
 
     public static Product findProductById(int id) {
         return Ebean.getServer("default").find(Product.class).where().eq("id", id).findOne();
@@ -41,9 +62,23 @@ public class Product extends Model {
         this.id = id;
     }
 
+    public String getUserId(){
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public String getName() {
         return name;
     }
+
+    /*
+    public String getAccount(){return account;}
+
+    public String getPassword(){return password;}
+     */
 
     public void setName(String name) {
         this.name = name;

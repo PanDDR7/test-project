@@ -33,20 +33,20 @@ public class HomeController extends Controller {
         return ok(response);
     }
      */
-    public Result login(Http.Request request){
-        JsonNode parameter = request.body().asJson();
+    public Result login(){
+        JsonNode parameter = request().body().asJson();
         if(!parameter.has("account")){
             return ok(Json.newObject().put("error_code", "00001"));
         }
         ObjectNode response = new ObjectNode(JsonNodeFactory.instance);
         User user = new User();
-        if(!parameter.get("account").asText().equals(user.getaccount())){
+        if(!parameter.get("account").asText().equals(user.getAccount())){
             return ok(Json.newObject().put("error_code", "login error! incorrect account"));
         }
-        if(!parameter.get("pwd").asText().equals(user.getPwd())){
+        if(!parameter.get("pwd").asText().equals(user.getPassword())){
             return ok(Json.newObject().put("error_code", "login error! incorrect password"));
         }
-        response.put("login_success", user.getUsername());
+        response.put("login_success", user.getName());
         return ok(response);
     }
 }

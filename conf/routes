@@ -7,7 +7,29 @@ GET     /                           controllers.HomeController.index
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
-POST    /login                      controllers.HomeController.login(request:Request)
+POST    /login                      controllers.HomeController.login()
 
 # Test
-GET     /test/getProduct            controllers.TestController.getProduct(id:Integer)
+# GET     /test/getProduct            controllers.TestController.getProduct(id:Integer,account:String,password:String)
+POST    /test/login                 controllers.TestController.login()
+
+#Product
+POST    /product/insert             controllers.ProductController.insert()
+POST    /product/update             controllers.ProductController.update()
+POST    /product/delete             controllers.ProductController.delete()
+POST    /product/show               controllers.ProductController.showAll()
+
+# Cart
+POST    /cart/insert                controllers.TestController.insert()
+POST    /cart/update                controllers.TestController.update()
+POST    /cart/delete                controllers.TestController.delete()
+POST    /cart/showAll               controllers.TestController.showAll()
+
+# BackendUser
+POST    /backend/login              controllers.BackendUserController.login()
+POST    /backend/insert             controllers.BackendUserController.insert()
+
+# FrontUser
+POST    /front/login                controllers.FrontUserController.login()
+POST    /front/insert               controllers.FrontUserController.insert()
+
