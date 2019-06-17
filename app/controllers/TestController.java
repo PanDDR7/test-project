@@ -46,6 +46,7 @@ public class TestController extends Controller {
     }
 
     public Result insert() {
+        /*
         JsonNode parameter = request().body().asJson();
         //參數有沒有缺
         ShoppingCart shoppingCart = ShoppingCart.findShoppingCartById(parameter.get("id").asInt());
@@ -63,10 +64,11 @@ public class TestController extends Controller {
         shoppingCart.setUserId(parameter.get("user_id").asText());
         shoppingCart.setProductId(parameter.get("product_id").asInt());
         shoppingCart.setQuantity(parameter.get("quantity").asText());
-         */
         //shoppingCart.save();
         Ebean.getServer("default").insert(shoppingCart);
         return ok(Json.newObject().put("insert success", "success"));
+        */
+        return TODO;
     }
 
     public Result update() {

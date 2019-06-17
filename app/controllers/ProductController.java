@@ -110,7 +110,7 @@ public class ProductController extends Controller {
             return ok(Json.newObject().put(product.getName(), product.getPrice()));
         }
          */
-        return ok(Json.newObject().pojoNode(response));
+        return ok(response);
     }
 
 }

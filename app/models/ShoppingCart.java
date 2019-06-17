@@ -26,6 +26,8 @@ public class ShoppingCart extends Model {
     private int productId;
     @Column(name = "quantity")
     private int quantity;
+    @Column(name = "total_amount")
+    private int totalAmount;
     @CreatedTimestamp
     @Column(name = "create_datetime")
     private Date createDatetime;
@@ -38,18 +40,15 @@ public class ShoppingCart extends Model {
 
     }
 
-    public ShoppingCart(String inputUserId,int inputProductId,int inputQuantity){
+    public ShoppingCart(String inputUserId,int inputProductId,int inputQuantity,int inputTotalAmount){
         this.userId=inputUserId;
         this.productId=inputProductId;
         this.quantity=inputQuantity;
+        this.totalAmount=inputTotalAmount;
     }
 
-    public static ShoppingCart findShoppingCartByProductId(int inputId){
-        return Ebean.getServer("default").find(ShoppingCart.class).where().eq("product_id",inputId).findOne();
-    }
-
-    public static List<ShoppingCart> ShoppingCartList(){
-        return Ebean.getServer("default").find(ShoppingCart.class).findList();
+    public static List<ShoppingCart> shoppingCartList(String userId){
+        return Ebean.getServer("default").find(ShoppingCart.class).where().eq("user_id",userId).findList();
     }
 
     public int getId() {
@@ -83,6 +82,12 @@ public class ShoppingCart extends Model {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    public int getTotalAmount(){
+        return totalAmount;
+    }
+
+    public void setTotalAmount(int totalAmount){this.totalAmount = totalAmount;}
 
     public Date getCreateDatetime() {
         return createDatetime;

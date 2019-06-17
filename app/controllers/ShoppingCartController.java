@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.google.common.collect.ObjectArrays;
 import com.mysql.cj.xdevapi.JsonArray;
 import io.ebean.Ebean;
 import io.ebean.EbeanServer;
@@ -25,31 +26,31 @@ public class ShoppingCartController extends Controller {
 
     public Result insert() {
         JsonNode parameter = request().body().asJson();
-        if (!parameter.has("user_uuid") || !parameter.has("name") || !parameter.has("quantity")) {
+        if (!parameter.has("user_uuid") || !parameter.has("product_id") || !parameter.has("quantity")) {
             return ok(Json.newObject().put("error_code", "00001"));
         }
-        String UUID = parameter.get("user_uuid").asText();
-        FrontUser frontUser = FrontUser.findFrontUserByUUID(UUID);
+        String user_uuid = parameter.get("user_uuid").asText();
+        FrontUser frontUser = FrontUser.findFrontUserByUUID(user_uuid);
         if (frontUser == null) {
             return ok(Json.newObject().put("message", "id is not exist"));
         }
-        String productName = parameter.get("name").asText();
+        int productId = parameter.get("product_id").asInt();
         int productQuantity = parameter.get("quantity").asInt();
         if (productQuantity < 0) {
             return ok(Json.newObject().put("message", "quantity must > 0"));
         }
-        Product product = Product.findProductByName(productName);
+        Product product = Product.findProductById(productId);
         if (product == null) {
             return ok(Json.newObject().put("message", "product is not exist"));
         }
-        ShoppingCart shoppingCart = new ShoppingCart(frontUser.getUserId(), product.getId(), productQuantity);
+        ShoppingCart shoppingCart = new ShoppingCart(frontUser.getUserId(), product.getId(), productQuantity,product.getPrice()*productQuantity);
         shoppingCart.save();
         return ok(Json.newObject().put("insert", "success"));
     }
 
     public Result delete() {
         JsonNode parameter = request().body().asJson();
-        if (!parameter.has("user_uuid") || !parameter.has("name")) {
+        if (!parameter.has("user_uuid") || !parameter.has("id")) {
             return ok(Json.newObject().put("error_code", "00001"));
         }
         String userUUID = parameter.get("user_uuid").asText();
@@ -57,25 +58,24 @@ public class ShoppingCartController extends Controller {
         if (frontUser == null) {
             return ok(Json.newObject().put("message", "id is not exist"));
         }
-        String productName = parameter.get("name").asText();
-        Product product = Product.findProductByName(productName);
-        if (product == null) {
-            return ok(Json.newObject().put("message", "product is not exist"));
+        int id = parameter.get("id").asInt();
+        ShoppingCart shoppingCart = ShoppingCart.findShoppingCartById(id);
+        if(shoppingCart == null){
+            return ok(Json.newObject().put("message", "id is not in shoppingCart"));
         }
-        ShoppingCart shoppingCart = ShoppingCart.findShoppingCartByProductId(product.getId());
-        if (shoppingCart == null) {
-            return ok(Json.newObject().put("message", "product is not in shoppingCart"));
+        if(!frontUser.getUserId().equals(shoppingCart.getUserId())){
+            return ok(Json.newObject().put("message", "product is not exist"));
         }
         shoppingCart.delete();
         return ok(Json.newObject().put("delete", "success"));
     }
 
-    public Result update(){
+    public Result update() {
         return TODO;
     }
 
     public Result totalAmount() {
-        int sum=0;
+        int sum = 0;
         //List shoppingCartList = ShoppingCart.ShoppingCartList();
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("user_uuid")) {
@@ -86,15 +86,14 @@ public class ShoppingCartController extends Controller {
         if (frontUser == null) {
             return ok(Json.newObject().put("message", "id is not exist"));
         }
-        List<ShoppingCart> shoppingCartList = Ebean.getServer("default").find(ShoppingCart.class).where().eq("user_id",frontUser.getUserId()).findList();
-        for (ShoppingCart shoppingCart : shoppingCartList){
-            Product product = Product.findProductById(shoppingCart.getProductId());
-            sum+=product.getPrice()*shoppingCart.getQuantity();
+        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartList(frontUser.getUserId());
+        for (ShoppingCart shoppingCart : shoppingCartList) {
+           sum+=shoppingCart.getTotalAmount();
         }
         return ok(Json.newObject().put("Total Amount", sum));
     }
 
-    public Result clear(){
+    public Result clear() {
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("user_uuid")) {
             return ok(Json.newObject().put("error_code", "00001"));
@@ -104,14 +103,14 @@ public class ShoppingCartController extends Controller {
         if (frontUser == null) {
             return ok(Json.newObject().put("message", "id is not exist"));
         }
-        List<ShoppingCart> shoppingCartList = Ebean.getServer("default").find(ShoppingCart.class).where().eq("user_id",frontUser.getUserId()).findList();
-        for (ShoppingCart shoppingCart : shoppingCartList){
+        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartList(frontUser.getUserId());
+        for (ShoppingCart shoppingCart : shoppingCartList) {
             shoppingCart.delete();
         }
         return ok(Json.newObject().put("clear all", "success"));
     }
 
-    public Result showAll(){
+    public Result showAll() {
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("user_uuid")) {
             return ok(Json.newObject().put("error_code", "00001"));
@@ -121,12 +120,17 @@ public class ShoppingCartController extends Controller {
         if (frontUser == null) {
             return ok(Json.newObject().put("message", "id is not exist"));
         }
-        List<ShoppingCart> shoppingCartList = Ebean.getServer("default").find(ShoppingCart.class).where().eq("user_id",frontUser.getUserId()).findList();
+        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartList(frontUser.getUserId());
         ObjectNode response = new ObjectNode(JsonNodeFactory.instance);
-        for (ShoppingCart shoppingCart : shoppingCartList){
-            Product product = Product.findProductById(shoppingCart.getProductId());
-            response.put(product.getName(),shoppingCart.getQuantity());
+        ArrayNode arrayNode = response.putArray("data");
+        //arrayNode.addObject().put("sadf","sadf");
+        //arrayNode.addObject().put("asdf","asdf");
+        for (ShoppingCart shoppingCart : shoppingCartList) {
+            //response.put();
+            //aaa.put(String.valueOf(shoppingCart.getProductId()),shoppingCart.getQuantity());
+            arrayNode.addObject().put("id",shoppingCart.getId()).put("product_id",shoppingCart.getProductId()).put("quantity",shoppingCart.getQuantity());
+            //arrayNode.addObject().put(String.valueOf(shoppingCart.getProductId()),shoppingCart.getQuantity());
         }
-        return ok(Json.newObject().pojoNode(response));
+        return ok(response);
     }
 }

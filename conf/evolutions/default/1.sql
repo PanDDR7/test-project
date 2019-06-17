@@ -45,6 +45,7 @@ create table shopping_cart (
   user_id                       varchar(255),
   product_id                    integer not null,
   quantity                      integer not null,
+  total_amount                  integer not null,
   create_datetime               datetime(6) not null,
   constraint pk_shopping_cart primary key (id)
 );
