@@ -54,6 +54,10 @@ public class Product extends Model {
         return Ebean.getServer("default").find(Product.class).where().eq("id", id).findOne();
     }
 
+    public static Product findProductByName(String inputName){
+        return Ebean.getServer("default").find(Product.class).where().eq("name",inputName).findOne();
+    }
+
     public int getId() {
         return id;
     }

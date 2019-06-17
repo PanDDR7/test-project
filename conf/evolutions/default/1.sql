@@ -44,7 +44,7 @@ create table shopping_cart (
   id                            integer auto_increment not null,
   user_id                       varchar(255),
   product_id                    integer not null,
-  quantity                      varchar(255),
+  quantity                      integer not null,
   create_datetime               datetime(6) not null,
   constraint pk_shopping_cart primary key (id)
 );

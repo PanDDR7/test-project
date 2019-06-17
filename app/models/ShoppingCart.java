@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "shopping_cart")
@@ -24,7 +25,7 @@ public class ShoppingCart extends Model {
     @Column(name = "product_id")
     private int productId;
     @Column(name = "quantity")
-    private String quantity;
+    private int quantity;
     @CreatedTimestamp
     @Column(name = "create_datetime")
     private Date createDatetime;
@@ -37,10 +38,18 @@ public class ShoppingCart extends Model {
 
     }
 
-    public ShoppingCart(String inputUserId,int inputProductId,String inputQuantity){
+    public ShoppingCart(String inputUserId,int inputProductId,int inputQuantity){
         this.userId=inputUserId;
         this.productId=inputProductId;
         this.quantity=inputQuantity;
+    }
+
+    public static ShoppingCart findShoppingCartByProductId(int inputId){
+        return Ebean.getServer("default").find(ShoppingCart.class).where().eq("product_id",inputId).findOne();
+    }
+
+    public static List<ShoppingCart> ShoppingCartList(){
+        return Ebean.getServer("default").find(ShoppingCart.class).findList();
     }
 
     public int getId() {
@@ -67,11 +76,11 @@ public class ShoppingCart extends Model {
         this.productId = productId;
     }
 
-    public String getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 

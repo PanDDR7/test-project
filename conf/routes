@@ -33,3 +33,10 @@ POST    /backend/insert             controllers.BackendUserController.insert()
 POST    /front/login                controllers.FrontUserController.login()
 POST    /front/insert               controllers.FrontUserController.insert()
 
+# ShoppingCart
+POST    /shoppingCart/insert        controllers.ShoppingCartController.insert()
+POST    /shoppingCart/delete        controllers.ShoppingCartController.delete()
+POST    /shoppingCart/totalAmount   controllers.ShoppingCartController.totalAmount()
+POST    /shoppingCart/clear         controllers.ShoppingCartController.clear()
+POST    /shoppingCart/showAll       controllers.ShoppingCartController.showAll()
+

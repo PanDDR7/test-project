@@ -2,6 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.mysql.cj.xdevapi.JsonArray;
@@ -93,20 +94,23 @@ public class ProductController extends Controller {
 
     public Result showAll(){
         List<Product> products = Ebean.getServer("default").find(Product.class).findList();
+        ObjectNode response = new ObjectNode(JsonNodeFactory.instance);
+        for (Product product : products){
+            response.put(product.getName(),product.getPrice());
+        }
+        /*
         StringBuffer stringBuffer = new StringBuffer();
         for (Product product : products){
             stringBuffer.append(product.getName() + "=" + product.getPrice());
         }
-        /*
         for(int i=0;i<products.size();i++){
             return ok(Json.newObject().put(products.get(i).getName(),products.get(i).getPrice()));
         }
-        /*
         for(Product product : products){
             return ok(Json.newObject().put(product.getName(), product.getPrice()));
         }
          */
-        return ok(Json.newObject().put("show", stringBuffer.toString()));
+        return ok(Json.newObject().pojoNode(response));
     }
 
 }

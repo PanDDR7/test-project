@@ -53,7 +53,7 @@ public class TestController extends Controller {
             return ok(Json.newObject().put("message", "id already exist"));
         }
         //參數的規則
-        shoppingCart = new ShoppingCart(parameter.get("user_id").asText(), parameter.get("product_id").asInt(), parameter.get("quantity").asText());
+        shoppingCart = new ShoppingCart(parameter.get("user_id").asText(), parameter.get("product_id").asInt(), parameter.get("quantity").asInt());
         /*
         ShoppingCart shoppingCart = ShoppingCart.findShoppingCartById(parameter.get("id").asInt());
         if(shoppingCart!=null){
@@ -86,7 +86,7 @@ public class TestController extends Controller {
         }
         shoppingCart.setUserId(parameter.get("user_id").asText());
         shoppingCart.setProductId(parameter.get("product_id").asInt());
-        shoppingCart.setQuantity(parameter.get("quantity").asText());
+        shoppingCart.setQuantity(parameter.get("quantity").asInt());
         shoppingCart.update();
         //Ebean.getServer("default").update(shoppingCart);
         return ok(Json.newObject().put("update success", "success"));
