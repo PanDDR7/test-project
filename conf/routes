@@ -18,6 +18,7 @@ POST    /product/insert             controllers.ProductController.insert()
 POST    /product/update             controllers.ProductController.update()
 POST    /product/delete             controllers.ProductController.delete()
 POST    /product/show               controllers.ProductController.showAll()
+POST    /product/search             controllers.ProductController.search()
 
 # Cart
 POST    /cart/insert                controllers.TestController.insert()

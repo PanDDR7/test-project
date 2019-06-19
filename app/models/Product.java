@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -43,8 +44,7 @@ public class Product extends Model {
 
     }
 
-    public Product(int inputID,String inputUserId,String inputName,int inputPrice){
-        this.id=inputID;
+    public Product(String inputUserId,String inputName,int inputPrice){
         this.userId=inputUserId;
         this.name=inputName;
         this.price=inputPrice;
@@ -53,11 +53,14 @@ public class Product extends Model {
     public static Product findProductById(int id) {
         return Ebean.getServer("default").find(Product.class).where().eq("id", id).findOne();
     }
-    /*
-    public static Product findProductByName(String inputName){
-        return Ebean.getServer("default").find(Product.class).where().eq("name",inputName).findOne();
+
+    public static Product findProductByName(String name){
+        return Ebean.getServer("default").find(Product.class).where().eq("name",name).findOne();
     }
-     */
+
+    public static List<Product> findProductList(){
+        return Ebean.getServer("default").find(Product.class).findList();
+    }
 
     public int getId() {
         return id;

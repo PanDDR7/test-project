@@ -26,7 +26,7 @@ public class ProductController extends Controller {
 
     public Result insert(){
         JsonNode parameter = request().body().asJson();
-        if(!parameter.has("id")||!parameter.has("name")||!parameter.has("price")||!parameter.has("user_uuid")){
+        if(!parameter.has("name")||!parameter.has("price")||!parameter.has("user_uuid")){
             return ok(Json.newObject().put("error_code", "00001"));
         }
         /*
@@ -40,15 +40,15 @@ public class ProductController extends Controller {
         if(parameter.get("price").asInt()<0){
             return ok(Json.newObject().put("message", "price must > 0"));
         }
-        Product product = Product.findProductById(parameter.get("id").asInt());
+        Product product = Product.findProductByName(parameter.get("name").asText());
         if(product != null){
-            return ok(Json.newObject().put("message", "id already exist"));
+            return ok(Json.newObject().put("message", "product already exist"));
         }
         BackendUser backendUser = BackendUser.findBackendUserByUUID(parameter.get("user_uuid").asText());
         if(backendUser==null){
             return ok(Json.newObject().put("message", "User UUID is not exist"));
         }
-        product = new Product(parameter.get("id").asInt(),backendUser.getUserId(),parameter.get("name").asText(),parameter.get("price").asInt());
+        product = new Product(backendUser.getUserId(),parameter.get("name").asText(),parameter.get("price").asInt());
         product.save();
         return ok(Json.newObject().put("insert success", "success"));
     }
@@ -81,22 +81,35 @@ public class ProductController extends Controller {
 
     public Result delete(){
         JsonNode parameter = request().body().asJson();
-        if(!parameter.has("id")){
+        if(!parameter.has("user_uuid")||!parameter.has("id")){
             return ok(Json.newObject().put("error_code", "00001"));
         }
+        BackendUser backendUser = BackendUser.findBackendUserByUUID(parameter.get("user_uuid").asText());
+        if(backendUser==null){
+            return ok(Json.newObject().put("message", "User UUID is not exist"));
+        }
         Product product = Product.findProductById(parameter.get("id").asInt());
-        if(product == null || parameter.get("id").asInt()<0){
-            return ok(Json.newObject().put("message", "id is not exist & id must > 0"));
+        if(product == null){
+            return ok(Json.newObject().put("message", "id is not exist"));
         }
         product.delete();
         return ok(Json.newObject().put("delete", "success"));
     }
 
     public Result showAll(){
-        List<Product> products = Ebean.getServer("default").find(Product.class).findList();
+        JsonNode parameter  = request().body().asJson();
+        if(!parameter.has("user_uuid")){
+            return ok(Json.newObject().put("error_code", "00001"));
+        }
+        BackendUser backendUser = BackendUser.findBackendUserByUUID(parameter.get("user_uuid").asText());
+        if(backendUser==null){
+            return ok(Json.newObject().put("message", "User UUID is not exist"));
+        }
+        List<Product> products = Product.findProductList();
         ObjectNode response = new ObjectNode(JsonNodeFactory.instance);
-        for (Product product : products){
-            response.put(product.getName(),product.getPrice());
+        ArrayNode arrayNode = response.putArray("data");
+        for(Product product : products){
+            arrayNode.addObject().put("id",product.getId());
         }
         /*
         StringBuffer stringBuffer = new StringBuffer();
@@ -111,6 +124,25 @@ public class ProductController extends Controller {
         }
          */
         return ok(response);
+    }
+
+    public  Result search(){
+        JsonNode parameter = request().body().asJson();
+        if(!parameter.has("user_uuid")||!parameter.has("id")){
+            return ok(Json.newObject().put("error_code", "00001"));
+        }
+        FrontUser frontUser = FrontUser.findFrontUserByUUID(parameter.get("user_uuid").asText());
+        if(frontUser==null){
+            return ok(Json.newObject().put("message", "User UUID is not exist"));
+        }
+        Product product = Product.findProductById(parameter.get("id").asInt());
+        if(product==null){
+            return ok(Json.newObject().put("message", "id is not exist"));
+        }
+        ObjectNode respone = new ObjectNode(JsonNodeFactory.instance);
+        ArrayNode arrayNode = respone.putArray("data");
+        arrayNode.addObject().put("id",product.getId()).put("name",product.getName()).put("price",product.getPrice());
+        return ok(respone);
     }
 
 }
