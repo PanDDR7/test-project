@@ -6,38 +6,40 @@
 GET     /                           controllers.HomeController.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
-POST    /login                      controllers.HomeController.login()
+GET     /test/assets/*file                       controllers.Assets.versioned(path="/public", file: Asset)
+POST    /test/login                              controllers.HomeController.login()
 
 # Test
-# GET     /test/getProduct            controllers.TestController.getProduct(id:Integer,account:String,password:String)
-POST    /test/login                 controllers.TestController.login()
+# GET   /test/test/getProduct                    controllers.TestController.getProduct(id:Integer,account:String,password:String)
+POST    /test/test/login                         controllers.TestController.login()
 
 #Product
-POST    /product/insert             controllers.ProductController.insert()
-POST    /product/update             controllers.ProductController.update()
-POST    /product/delete             controllers.ProductController.delete()
-POST    /product/show               controllers.ProductController.showAll()
-POST    /product/search             controllers.ProductController.search()
+POST    /test/product/addNewProduct              controllers.ProductController.addNewProduct()
+POST    /test/product/updateProductData          controllers.ProductController.updateProductData()
+POST    /test/product/deleteProduct              controllers.ProductController.deleteProduct()
+POST    /test/product/frontShowAll               controllers.ProductController.FrontShowAll()
+POST    /test/product/backendShowAll             controllers.ProductController.BackendShowAll()
+POST    /test/product/frontSearchProduct         controllers.ProductController.frontSearchProduct()
+POST    /test/product/backendSearchProduct       controllers.ProductController.backendSearchProduct()
 
 # Cart
-POST    /cart/insert                controllers.TestController.insert()
-POST    /cart/update                controllers.TestController.update()
-POST    /cart/delete                controllers.TestController.delete()
-POST    /cart/showAll               controllers.TestController.showAll()
+POST    /test/cart/insert                        controllers.TestController.insert()
+POST    /test/cart/update                        controllers.TestController.update()
+POST    /test/cart/delete                        controllers.TestController.delete()
+POST    /test/cart/showAll                       controllers.TestController.showAll()
 
 # BackendUser
-POST    /backend/login              controllers.BackendUserController.login()
-POST    /backend/insert             controllers.BackendUserController.insert()
+POST    /test/backend/login                      controllers.BackendUserController.login()
+POST    /test/backend/insert                     controllers.BackendUserController.insert()
 
 # FrontUser
-POST    /front/login                controllers.FrontUserController.login()
-POST    /front/insert               controllers.FrontUserController.insert()
+POST    /test/front/login                        controllers.FrontUserController.login()
+POST    /test/front/insert                       controllers.FrontUserController.insert()
 
 # ShoppingCart
-POST    /shoppingCart/insert        controllers.ShoppingCartController.insert()
-POST    /shoppingCart/delete        controllers.ShoppingCartController.delete()
-POST    /shoppingCart/totalAmount   controllers.ShoppingCartController.totalAmount()
-POST    /shoppingCart/clear         controllers.ShoppingCartController.clear()
-POST    /shoppingCart/showAll       controllers.ShoppingCartController.showAll()
+POST    /test/shoppingCart/insert                controllers.ShoppingCartController.insert()
+POST    /test/shoppingCart/delete                controllers.ShoppingCartController.delete()
+POST    /test/shoppingCart/totalAmount           controllers.ShoppingCartController.totalAmount()
+POST    /test/shoppingCart/clear                 controllers.ShoppingCartController.clear()
+POST    /test/shoppingCart/showAll               controllers.ShoppingCartController.showAll()
 
