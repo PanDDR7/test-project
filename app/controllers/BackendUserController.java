@@ -13,7 +13,6 @@ import play.libs.Json;
 import models.Product;
 import play.mvc.Controller;
 import play.mvc.Result;
-import scala.util.parsing.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

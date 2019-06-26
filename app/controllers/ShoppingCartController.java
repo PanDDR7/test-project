@@ -10,11 +10,11 @@ import com.mysql.cj.xdevapi.JsonArray;
 import io.ebean.Ebean;
 import io.ebean.EbeanServer;
 import io.ebean.Model;
+
 import models.*;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
-import scala.util.parsing.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -43,7 +43,13 @@ public class ShoppingCartController extends Controller {
         if (product == null) {
             return ok(Json.newObject().put("message", "product is not exist"));
         }
-        ShoppingCart shoppingCart = new ShoppingCart(frontUser.getUserId(), product.getId(), productQuantity,product.getPrice()*productQuantity);
+        //ShoppingCart shoppingCart = new ShoppingCart(frontUser.getUserId(), product.getId(), productQuantity,product.getPrice()*productQuantity);
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUserId(frontUser.getUserId());
+        shoppingCart.setProductId(product.getId());
+        shoppingCart.setQuantity(productQuantity);
+        shoppingCart.setPrice(product.getPrice());
+        shoppingCart.setTotalAmount(product.getPrice()*productQuantity);
         shoppingCart.save();
         return ok(Json.newObject().put("insert", "success"));
     }
@@ -90,7 +96,7 @@ public class ShoppingCartController extends Controller {
         for (ShoppingCart shoppingCart : shoppingCartList) {
            sum+=shoppingCart.getTotalAmount();
         }
-        return ok(Json.newObject().put("Total Amount", sum));
+        return ok(Json.newObject().put("Total_Amount", sum));
     }
 
     public Result clear() {

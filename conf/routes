@@ -17,8 +17,8 @@ POST    /test/test/login                         controllers.TestController.logi
 POST    /test/product/addNewProduct              controllers.ProductController.addNewProduct()
 POST    /test/product/updateProductData          controllers.ProductController.updateProductData()
 POST    /test/product/deleteProduct              controllers.ProductController.deleteProduct()
-POST    /test/product/frontShowAll               controllers.ProductController.FrontShowAll()
-POST    /test/product/backendShowAll             controllers.ProductController.BackendShowAll()
+POST    /test/product/frontShowAll               controllers.ProductController.frontShowAll()
+POST    /test/product/backendShowAll             controllers.ProductController.backendShowAll()
 POST    /test/product/frontSearchProduct         controllers.ProductController.frontSearchProduct()
 POST    /test/product/backendSearchProduct       controllers.ProductController.backendSearchProduct()
 
@@ -42,4 +42,9 @@ POST    /test/shoppingCart/delete                controllers.ShoppingCartControl
 POST    /test/shoppingCart/totalAmount           controllers.ShoppingCartController.totalAmount()
 POST    /test/shoppingCart/clear                 controllers.ShoppingCartController.clear()
 POST    /test/shoppingCart/showAll               controllers.ShoppingCartController.showAll()
+
+# Orders
+POST    /test/orders/produceOrder                controllers.OrdersController.produceOrder()
+POST    /test/orders/cancelOrder                 controllers.OrdersController.cancelOrder()
+POST    /test/orders/showOrderListForFront       controllers.OrdersController.showOrderListForFront()
 

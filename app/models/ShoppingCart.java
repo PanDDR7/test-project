@@ -26,6 +26,8 @@ public class ShoppingCart extends Model {
     private int productId;
     @Column(name = "quantity")
     private int quantity;
+    @Column(name = "price")
+    private int price;
     @Column(name = "total_amount")
     private int totalAmount;
     @CreatedTimestamp
@@ -81,6 +83,14 @@ public class ShoppingCart extends Model {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public int getTotalAmount(){
