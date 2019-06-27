@@ -11,12 +11,14 @@ import io.ebean.Ebean;
 import io.ebean.EbeanServer;
 import io.ebean.Model;
 import models.*;
+import play.api.libs.ws.*;
 import play.libs.F;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.lang.reflect.Array;
+import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -99,6 +101,30 @@ public class OrdersController extends Controller {
         if (ordersList.size() == 0) {
             return ok(Json.newObject().put("message", "user do not have order"));
         }
+        ObjectNode response = new ObjectNode(JsonNodeFactory.instance);
+        ArrayNode arrayNode = response.putArray("data");
+        for (Orders orders : ordersList) {
+            arrayNode.addObject().put("id", orders.getId()).put("user_id", orders.getUserID()).put("total_amount", orders.getTotalAmount()).put("status", orders.getStatus());
+        }
+        return ok(response);
+
+        /*
+        WSRequest wsRequest = request().addAttr();
+        wsRequest.body();
+         */
+    }
+
+    public Result showOrderListForBackend() {
+        JsonNode parameter = request().body().asJson();
+        if (!parameter.has("user_uuid")) {
+            return ok(Json.newObject().put("error_code", "00001"));
+        }
+        String userUUID = parameter.get("user_uuid").asText();
+        BackendUser backendUser = BackendUser.findBackendUserByUUID(userUUID);
+        if (backendUser == null) {
+            return ok(Json.newObject().put("message", "id is not exist"));
+        }
+        List<Orders> ordersList = Orders.findOrdersList();
         ObjectNode response = new ObjectNode(JsonNodeFactory.instance);
         ArrayNode arrayNode = response.putArray("data");
         for (Orders orders : ordersList) {

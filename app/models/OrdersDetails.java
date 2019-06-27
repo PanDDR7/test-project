@@ -16,7 +16,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders_detail")
-public class OrdersDetails extends Model{
+public class OrdersDetails extends Model {
     @Id
     @Column(name = "id")
     private int id;
@@ -35,8 +35,12 @@ public class OrdersDetails extends Model{
     private Date createDatetime;
 
 
-    public static OrdersDetails findOrdersById(int id){
-        return Ebean.getServer("default").find(OrdersDetails.class).where().eq("id",id).findOne();
+    public static OrdersDetails findOrdersById(int id) {
+        return Ebean.getServer("default").find(OrdersDetails.class).where().eq("id", id).findOne();
+    }
+
+    public static List<OrdersDetails> findOrdersDetailsListByOrderId(int id) {
+        return Ebean.getServer("default").find(OrdersDetails.class).where().eq("order_id", id).findList();
     }
 
     public int getId() {
@@ -47,29 +51,45 @@ public class OrdersDetails extends Model{
         this.id = id;
     }
 
-    public int getOrderId(){
+    public int getOrderId() {
         return orderId;
     }
 
     public void setOrderId(int orderId) {
-        this.orderId=orderId;
+        this.orderId = orderId;
     }
 
-    public int getProductId(){return productId;}
+    public int getProductId() {
+        return productId;
+    }
 
-    public void setProductId(int productId){this.productId=productId;}
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
 
-    public int getQuantity(){return quantity;}
+    public int getQuantity() {
+        return quantity;
+    }
 
-    public void setQuantity(int quantity){this.quantity=quantity;}
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 
-    public int getPrice(){return price;}
+    public int getPrice() {
+        return price;
+    }
 
-    public void setPrice(int price){this.price=price;}
+    public void setPrice(int price) {
+        this.price = price;
+    }
 
-    public int getTotalAmount(){return totalAmount;}
+    public int getTotalAmount() {
+        return totalAmount;
+    }
 
-    public void setTotalAmount(int totalAmount){this.totalAmount=totalAmount;}
+    public void setTotalAmount(int totalAmount) {
+        this.totalAmount = totalAmount;
+    }
 
     public Date getCreateDatetime() {
         return createDatetime;

@@ -42,6 +42,10 @@ public class Orders extends Model{
         return Ebean.getServer("default").find(Orders.class).where().eq("user_id",userId).findList();
     }
 
+    public static List<Orders> findOrdersList(){
+        return Ebean.getServer("default").find(Orders.class).findList();
+    }
+
     public int getId() {
         return id;
     }

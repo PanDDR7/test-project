@@ -47,4 +47,7 @@ POST    /test/shoppingCart/showAll               controllers.ShoppingCartControl
 POST    /test/orders/produceOrder                controllers.OrdersController.produceOrder()
 POST    /test/orders/cancelOrder                 controllers.OrdersController.cancelOrder()
 POST    /test/orders/showOrderListForFront       controllers.OrdersController.showOrderListForFront()
+POST    /test/orders/showOrderListForBackend     controllers.OrdersController.showOrderListForBackend()
 
+# OrdersDetails
+POST    /test/orders/OrdersDetailsController     controllers.OrdersDetailsController.searchOrderDetails()
