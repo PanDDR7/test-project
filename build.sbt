@@ -17,3 +17,5 @@ libraryDependencies ++= Seq(
   "org.mariadb.jdbc" % "mariadb-java-client" % "1.4.4"
 )
 playEbeanModels in Compile := Seq("models.*")
+
+libraryDependencies += ws

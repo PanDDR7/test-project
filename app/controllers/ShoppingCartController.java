@@ -47,6 +47,7 @@ public class ShoppingCartController extends Controller {
         ShoppingCart shoppingCart = new ShoppingCart();
         shoppingCart.setUserId(frontUser.getUserId());
         shoppingCart.setProductId(product.getId());
+        shoppingCart.setProductName(product.getName());
         shoppingCart.setQuantity(productQuantity);
         shoppingCart.setPrice(product.getPrice());
         shoppingCart.setTotalAmount(product.getPrice()*productQuantity);

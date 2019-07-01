@@ -14,17 +14,24 @@ import models.*;
 import play.api.libs.ws.*;
 import play.libs.F;
 import play.libs.Json;
+import play.libs.ws.WSClient;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import javax.inject.Inject;
 import java.lang.reflect.Array;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletionStage;
+
 
 public class OrdersController extends Controller {
+    @Inject
+    WSClient wsClient;
+
     public Result produceOrder() {
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("user_uuid")) {
@@ -54,6 +61,7 @@ public class OrdersController extends Controller {
         for (ShoppingCart shoppingCart : shoppingCartList) {
             ordersDetails.setOrderId(orderId);
             ordersDetails.setProductId(shoppingCart.getProductId());
+            ordersDetails.setProductName(shoppingCart.getProductName());
             ordersDetails.setQuantity(shoppingCart.getQuantity());
             ordersDetails.setPrice(shoppingCart.getPrice());
             ordersDetails.setTotalAmount(shoppingCart.getTotalAmount());
@@ -62,6 +70,38 @@ public class OrdersController extends Controller {
             shoppingCart.delete();
         }
         return ok(Json.newObject().put("message", "success"));
+    }
+
+    public CompletionStage<Result> checkOutShoppingCart() {
+        JsonNode parameter = request().body().asJson();
+        String userUUID = parameter.get("user_uuid").asText();
+        FrontUser frontUser = FrontUser.findFrontUserByUUID(userUUID);
+        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartList(frontUser.getUserId());
+        int sum = 0;
+        for (ShoppingCart shoppingCart : shoppingCartList) {
+            sum += shoppingCart.getTotalAmount();
+        }
+        JsonNode request = Json.newObject().put("total_amount", sum);
+        return wsClient.url("http://nas.ecloudmobile.com:9091/eic/api/payTest").post(request).thenApply(wsResponse -> {
+            if (wsResponse.asJson().has("message")) {
+                //return ok("success");
+                String message = wsResponse.asJson().get("message").asText();
+                if (message.equals("success")) {
+                    Orders orders = Orders.findOrdersByUserId(frontUser.getUserId());
+                    orders.setStatus("1");
+                    orders.save();
+                    return ok("check out success");
+                } else {
+                    Orders orders = Orders.findOrdersByUserId(frontUser.getUserId());
+                    orders.setStatus("2");
+                    orders.save();
+                    return ok("check out fail");
+                }
+            } else {
+                return ok("fail");
+            }
+        });
+
     }
 
     public Result cancelOrder() {

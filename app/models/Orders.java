@@ -38,6 +38,10 @@ public class Orders extends Model{
         return Ebean.getServer("default").find(Orders.class).where().eq("id",id).findOne();
     }
 
+    public static Orders findOrdersByUserId(String userId){
+        return Ebean.getServer("default").find(Orders.class).where().eq("user_id",userId).findOne();
+    }
+
     public static List<Orders> findOrdersListByUserId(String userId){
         return Ebean.getServer("default").find(Orders.class).where().eq("user_id",userId).findList();
     }

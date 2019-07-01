@@ -50,4 +50,6 @@ POST    /test/orders/showOrderListForFront       controllers.OrdersController.sh
 POST    /test/orders/showOrderListForBackend     controllers.OrdersController.showOrderListForBackend()
 
 # OrdersDetails
-POST    /test/orders/OrdersDetailsController     controllers.OrdersDetailsController.searchOrderDetails()
+POST    /test/orders/apiTest                       controllers.OrdersDetailsController.apiTest()
+POST    /test/orders/searchOrderDetailsForFront    controllers.OrdersDetailsController.searchOrderDetailsForFront()
+POST    /test/orders/searchOrderDetailsForBackend  controllers.OrdersDetailsController.searchOrderDetailsForBackend()
