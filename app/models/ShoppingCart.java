@@ -51,7 +51,7 @@ public class ShoppingCart extends Model {
         this.totalAmount=inputTotalAmount;
     }
 
-    public static List<ShoppingCart> shoppingCartList(String userId){
+    public static List<ShoppingCart> shoppingCartListByUserId(String userId){
         return Ebean.getServer("default").find(ShoppingCart.class).where().eq("user_id",userId).findList();
     }
 

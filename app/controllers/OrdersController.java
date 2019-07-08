@@ -7,10 +7,12 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.google.common.collect.ObjectArrays;
 import com.mysql.cj.xdevapi.JsonArray;
+import dataTypes.OrderStatus;
 import io.ebean.Ebean;
 import io.ebean.EbeanServer;
 import io.ebean.Model;
 import models.*;
+import play.Logger;
 import play.api.libs.ws.*;
 import play.libs.F;
 import play.libs.Json;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 
@@ -42,7 +45,7 @@ public class OrdersController extends Controller {
         if (frontUser == null) {
             return ok(Json.newObject().put("message", "id is not exist"));
         }
-        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartList(frontUser.getUserId());
+        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartListByUserId(frontUser.getUserId());
         if (shoppingCartList.size() == 0) {
             return ok(Json.newObject().put("message", "there is no product in shoppingCart"));
         }
@@ -74,34 +77,61 @@ public class OrdersController extends Controller {
 
     public CompletionStage<Result> checkOutShoppingCart() {
         JsonNode parameter = request().body().asJson();
+        if (!parameter.has("user_uuid")) {
+            return CompletableFuture.completedFuture(ok(Json.newObject().put("error_code", "00001")));
+        }
         String userUUID = parameter.get("user_uuid").asText();
         FrontUser frontUser = FrontUser.findFrontUserByUUID(userUUID);
-        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartList(frontUser.getUserId());
+        if(frontUser==null){
+            return CompletableFuture.completedFuture(ok(Json.newObject().put("message", "user is not exist")));
+        }
+        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartListByUserId(frontUser.getUserId());
+        if (shoppingCartList.size() == 0) {
+            return CompletableFuture.completedFuture(ok(Json.newObject().put("message", "there is no product in shoppingCart")));
+        }
         int sum = 0;
         for (ShoppingCart shoppingCart : shoppingCartList) {
             sum += shoppingCart.getTotalAmount();
         }
+        Orders orders = new Orders();
+        orders.setUserId(frontUser.getUserId());
+        orders.setUserUUID(frontUser.getUserUUID());
+        orders.setTotalAmount(sum);
+        orders.setStatus("0");
+        orders.save();
+        int orderId = orders.getId();
+        OrdersDetails ordersDetails = new OrdersDetails();
+        for (ShoppingCart shoppingCart : shoppingCartList) {
+            ordersDetails.setOrderId(orderId);
+            ordersDetails.setProductId(shoppingCart.getProductId());
+            ordersDetails.setProductName(shoppingCart.getProductName());
+            ordersDetails.setQuantity(shoppingCart.getQuantity());
+            ordersDetails.setPrice(shoppingCart.getPrice());
+            ordersDetails.setTotalAmount(shoppingCart.getTotalAmount());
+            ordersDetails.save();
+            ordersDetails = new OrdersDetails();
+            shoppingCart.delete();
+        }
         JsonNode request = Json.newObject().put("total_amount", sum);
         return wsClient.url("http://nas.ecloudmobile.com:9091/eic/api/payTest").post(request).thenApply(wsResponse -> {
+            Logger.debug("{}", wsResponse.asJson());
             if (wsResponse.asJson().has("message")) {
-                //return ok("success");
+                //return ok("");
                 String message = wsResponse.asJson().get("message").asText();
-                if (message.equals("success")) {
-                    Orders orders = Orders.findOrdersByUserId(frontUser.getUserId());
+                if(message.equals("success")){
                     orders.setStatus("1");
-                    orders.save();
-                    return ok("check out success");
-                } else {
-                    Orders orders = Orders.findOrdersByUserId(frontUser.getUserId());
+                    orders.update();
+                    return ok(Json.newObject().put("message", "order create success and pay success"));
+                }else {
                     orders.setStatus("2");
-                    orders.save();
-                    return ok("check out fail");
+                    orders.update();
+                    return ok(Json.newObject().put("message", "order create success but pay fail"));
                 }
+
             } else {
                 return ok("fail");
             }
         });
-
     }
 
     public Result cancelOrder() {
@@ -144,14 +174,10 @@ public class OrdersController extends Controller {
         ObjectNode response = new ObjectNode(JsonNodeFactory.instance);
         ArrayNode arrayNode = response.putArray("data");
         for (Orders orders : ordersList) {
-            arrayNode.addObject().put("id", orders.getId()).put("user_id", orders.getUserID()).put("total_amount", orders.getTotalAmount()).put("status", orders.getStatus());
+            OrderStatus orderStatus = OrderStatus.setStatus(orders.getStatus());
+            arrayNode.addObject().put("id", orders.getId()).put("user_id", orders.getUserID()).put("total_amount", orders.getTotalAmount()).put("status", orderStatus.getStatus());
         }
         return ok(response);
-
-        /*
-        WSRequest wsRequest = request().addAttr();
-        wsRequest.body();
-         */
     }
 
     public Result showOrderListForBackend() {
@@ -168,7 +194,8 @@ public class OrdersController extends Controller {
         ObjectNode response = new ObjectNode(JsonNodeFactory.instance);
         ArrayNode arrayNode = response.putArray("data");
         for (Orders orders : ordersList) {
-            arrayNode.addObject().put("id", orders.getId()).put("user_id", orders.getUserID()).put("total_amount", orders.getTotalAmount()).put("status", orders.getStatus());
+            OrderStatus orderStatus = OrderStatus.setStatus(orders.getStatus());
+            arrayNode.addObject().put("id", orders.getId()).put("user_id", orders.getUserID()).put("total_amount", orders.getTotalAmount()).put("status", orderStatus.getStatus());
         }
         return ok(response);
     }

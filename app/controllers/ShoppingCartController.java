@@ -93,7 +93,7 @@ public class ShoppingCartController extends Controller {
         if (frontUser == null) {
             return ok(Json.newObject().put("message", "id is not exist"));
         }
-        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartList(frontUser.getUserId());
+        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartListByUserId(frontUser.getUserId());
         for (ShoppingCart shoppingCart : shoppingCartList) {
            sum+=shoppingCart.getTotalAmount();
         }
@@ -110,7 +110,7 @@ public class ShoppingCartController extends Controller {
         if (frontUser == null) {
             return ok(Json.newObject().put("message", "id is not exist"));
         }
-        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartList(frontUser.getUserId());
+        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartListByUserId(frontUser.getUserId());
         for (ShoppingCart shoppingCart : shoppingCartList) {
             shoppingCart.delete();
         }
@@ -127,7 +127,7 @@ public class ShoppingCartController extends Controller {
         if (frontUser == null) {
             return ok(Json.newObject().put("message", "id is not exist"));
         }
-        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartList(frontUser.getUserId());
+        List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartListByUserId(frontUser.getUserId());
         ObjectNode response = new ObjectNode(JsonNodeFactory.instance);
         ArrayNode arrayNode = response.putArray("data");
         //arrayNode.addObject().put("sadf","sadf");
