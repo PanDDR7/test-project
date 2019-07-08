@@ -38,7 +38,7 @@ public class OrdersController extends Controller {
     public Result produceOrder() {
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("user_uuid")) {
-            return ok(Json.newObject().put("error_code", "00001"));
+            return ok(Json.newObject().put("error_code", "0001"));
         }
         String userUUID = parameter.get("user_uuid").asText();
         FrontUser frontUser = FrontUser.findFrontUserByUUID(userUUID);
