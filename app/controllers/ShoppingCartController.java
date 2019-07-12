@@ -43,6 +43,10 @@ public class ShoppingCartController extends Controller {
         if (product == null) {
             return ok(Json.newObject().put("message", "product is not exist"));
         }
+        ShoppingCart cart = ShoppingCart.findShoppingCartByProductId(productId);
+        if (cart != null) {
+            return ok(Json.newObject().put("message", "product is already in shoppingCart"));
+        }
         //ShoppingCart shoppingCart = new ShoppingCart(frontUser.getUserId(), product.getId(), productQuantity,product.getPrice()*productQuantity);
         ShoppingCart shoppingCart = new ShoppingCart();
         shoppingCart.setUserId(frontUser.getUserId());
@@ -50,7 +54,7 @@ public class ShoppingCartController extends Controller {
         shoppingCart.setProductName(product.getName());
         shoppingCart.setQuantity(productQuantity);
         shoppingCart.setPrice(product.getPrice());
-        shoppingCart.setTotalAmount(product.getPrice()*productQuantity);
+        shoppingCart.setTotalAmount(product.getPrice() * productQuantity);
         shoppingCart.save();
         return ok(Json.newObject().put("insert", "success"));
     }
@@ -67,10 +71,10 @@ public class ShoppingCartController extends Controller {
         }
         int id = parameter.get("id").asInt();
         ShoppingCart shoppingCart = ShoppingCart.findShoppingCartById(id);
-        if(shoppingCart == null){
+        if (shoppingCart == null) {
             return ok(Json.newObject().put("message", "id is not in shoppingCart"));
         }
-        if(!frontUser.getUserId().equals(shoppingCart.getUserId())){
+        if (!frontUser.getUserId().equals(shoppingCart.getUserId())) {
             return ok(Json.newObject().put("message", "product is not exist"));
         }
         shoppingCart.delete();
@@ -95,7 +99,7 @@ public class ShoppingCartController extends Controller {
         }
         List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartListByUserId(frontUser.getUserId());
         for (ShoppingCart shoppingCart : shoppingCartList) {
-           sum+=shoppingCart.getTotalAmount();
+            sum += shoppingCart.getTotalAmount();
         }
         return ok(Json.newObject().put("Total_Amount", sum));
     }
@@ -135,7 +139,7 @@ public class ShoppingCartController extends Controller {
         for (ShoppingCart shoppingCart : shoppingCartList) {
             //response.put();
             //aaa.put(String.valueOf(shoppingCart.getProductId()),shoppingCart.getQuantity());
-            arrayNode.addObject().put("id",shoppingCart.getId()).put("product_id",shoppingCart.getProductId()).put("quantity",shoppingCart.getQuantity());
+            arrayNode.addObject().put("id", shoppingCart.getId()).put("product_id", shoppingCart.getProductId()).put("quantity", shoppingCart.getQuantity());
             //arrayNode.addObject().put(String.valueOf(shoppingCart.getProductId()),shoppingCart.getQuantity());
         }
         return ok(response);

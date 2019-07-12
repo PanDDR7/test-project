@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.mysql.cj.xdevapi.JsonArray;
+import dataTypes.ErrorMessage;
 import io.ebean.Ebean;
 import io.ebean.EbeanServer;
 import io.ebean.Model;
@@ -26,7 +27,7 @@ public class ProductController extends Controller {
     public Result addNewProduct() {
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("name") || !parameter.has("price") || !parameter.has("user_uuid")) {
-            return ok(Json.newObject().put("error_code", "00001"));
+            return ok(Json.toJson(ErrorMessage.NOT_ENOUGH_PARAMETERS.toErrorMap()));
         }
         String name = parameter.get("name").asText();
         String userUUID = parameter.get("user_uuid").asText();
@@ -52,13 +53,13 @@ public class ProductController extends Controller {
         }
         product = new Product(backendUser.getUserId(), name, price);
         product.save();
-        return ok(Json.newObject().put("insert success", "success"));
+        return ok(Json.newObject().put("Message", "insert success"));
     }
 
     public Result updateProductData() {
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("id") || !parameter.has("name") || !parameter.has("price") || !parameter.has("user_uuid")) {
-            return ok(Json.newObject().put("error_code", "00001"));
+            ok(Json.toJson(ErrorMessage.NOT_ENOUGH_PARAMETERS.toErrorMap()));
         }
         String name = parameter.get("name").asText();
         int productId = parameter.get("id").asInt();
@@ -66,7 +67,7 @@ public class ProductController extends Controller {
         String userUUID = parameter.get("user_uuid").asText();
         Product product = Product.findProductById(productId);
         if (product == null) {
-            return ok(Json.newObject().put("message", "id is not exist"));
+            return ok(Json.newObject().put("message", "product id is not exist"));
         }
         if (name == null) {
             return ok(Json.newObject().put("message", "please enter name"));
@@ -88,7 +89,7 @@ public class ProductController extends Controller {
     public Result deleteProduct() {
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("user_uuid") || !parameter.has("id")) {
-            return ok(Json.newObject().put("error_code", "00001"));
+            ok(Json.toJson(ErrorMessage.NOT_ENOUGH_PARAMETERS.toErrorMap()));
         }
         int productId = parameter.get("id").asInt();
         String userUUID = parameter.get("user_uuid").asText();
@@ -107,7 +108,7 @@ public class ProductController extends Controller {
     public Result frontShowAll() {
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("user_uuid")) {
-            return ok(Json.newObject().put("error_code", "00001"));
+            ok(Json.toJson(ErrorMessage.NOT_ENOUGH_PARAMETERS.toErrorMap()));
         }
         String userUUID = parameter.get("user_uuid").asText();
         FrontUser frontUser = FrontUser.findFrontUserByUUID(userUUID);
@@ -138,7 +139,7 @@ public class ProductController extends Controller {
     public Result backendShowAll() {
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("user_uuid")) {
-            return ok(Json.newObject().put("error_code", "00001"));
+            ok(Json.toJson(ErrorMessage.NOT_ENOUGH_PARAMETERS.toErrorMap()));
         }
         String userUUID = parameter.get("user_uuid").asText();
         BackendUser backendUser = BackendUser.findBackendUserByUUID(userUUID);
@@ -157,7 +158,7 @@ public class ProductController extends Controller {
     public Result frontSearchProduct() {
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("user_uuid") || !parameter.has("id")) {
-            return ok(Json.newObject().put("error_code", "00001"));
+            ok(Json.toJson(ErrorMessage.NOT_ENOUGH_PARAMETERS.toErrorMap()));
         }
         int productId = parameter.get("id").asInt();
         String userUUID = parameter.get("user_uuid").asText();
@@ -178,7 +179,7 @@ public class ProductController extends Controller {
     public Result backendSearchProduct() {
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("user_uuid") || !parameter.has("id")) {
-            return ok(Json.newObject().put("error_code", "00001"));
+            ok(Json.toJson(ErrorMessage.NOT_ENOUGH_PARAMETERS.toErrorMap()));
         }
         int productId = parameter.get("id").asInt();
         String userUUID = parameter.get("user_uuid").asText();

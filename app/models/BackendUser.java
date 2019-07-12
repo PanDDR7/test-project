@@ -55,6 +55,10 @@ public class BackendUser extends Model {
         return Ebean.getServer("default").find(BackendUser.class).where().eq("user_account",userAccount).findOne();
     }
 
+    public static BackendUser findBackendUserByUserId(String userId){
+        return Ebean.getServer("default").find(BackendUser.class).where().eq("user_id",userId).findOne();
+    }
+
     public static BackendUser findBackendUserByUUID(String userUUID){
         return Ebean.getServer("default").find(BackendUser.class).where().eq("user_uuid",userUUID).findOne();
     }

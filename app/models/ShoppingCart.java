@@ -55,6 +55,10 @@ public class ShoppingCart extends Model {
         return Ebean.getServer("default").find(ShoppingCart.class).where().eq("user_id",userId).findList();
     }
 
+    public static ShoppingCart findShoppingCartByProductId(int productId){
+        return Ebean.getServer("default").find(ShoppingCart.class).where().eq("product_id",productId).findOne();
+    }
+
     public int getId() {
         return id;
     }
