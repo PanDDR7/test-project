@@ -50,6 +50,10 @@ public class Orders extends Model{
         return Ebean.getServer("default").find(Orders.class).findList();
     }
 
+    public static List<Orders> findOrderListWithIndex(int index){
+        return Ebean.getServer("default").find(Orders.class).setFirstRow(index).setMaxRows(5).findList();
+    }
+
     public int getId() {
         return id;
     }
