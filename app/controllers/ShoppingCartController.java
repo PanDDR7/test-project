@@ -139,7 +139,7 @@ public class ShoppingCartController extends Controller {
         for (ShoppingCart shoppingCart : shoppingCartList) {
             //response.put();
             //aaa.put(String.valueOf(shoppingCart.getProductId()),shoppingCart.getQuantity());
-            arrayNode.addObject().put("id", shoppingCart.getId()).put("product_id", shoppingCart.getProductId()).put("product_name",shoppingCart.getProductName()).put("product_price",shoppingCart.getPrice()).put("quantity", shoppingCart.getQuantity());
+            arrayNode.addObject().put("id", shoppingCart.getId()).put("product_id", shoppingCart.getProductId()).put("quantity", shoppingCart.getQuantity());
             //arrayNode.addObject().put(String.valueOf(shoppingCart.getProductId()),shoppingCart.getQuantity());
         }
         return ok(response);

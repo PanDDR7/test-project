@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.google.common.collect.ObjectArrays;
 import com.mysql.cj.xdevapi.JsonArray;
-import dataTypes.ErrorMessage;
 import dataTypes.OrderStatus;
 import io.ebean.Ebean;
 import io.ebean.EbeanServer;
@@ -83,7 +82,7 @@ public class OrdersController extends Controller {
         }
         String userUUID = parameter.get("user_uuid").asText();
         FrontUser frontUser = FrontUser.findFrontUserByUUID(userUUID);
-        if (frontUser == null) {
+        if(frontUser==null){
             return CompletableFuture.completedFuture(ok(Json.newObject().put("message", "user is not exist")));
         }
         List<ShoppingCart> shoppingCartList = ShoppingCart.shoppingCartListByUserId(frontUser.getUserId());
@@ -119,11 +118,11 @@ public class OrdersController extends Controller {
             if (wsResponse.asJson().has("message")) {
                 //return ok("");
                 String message = wsResponse.asJson().get("message").asText();
-                if (message.equals("success")) {
+                if(message.equals("success")){
                     orders.setStatus("1");
                     orders.update();
                     return ok(Json.newObject().put("message", "order create success and pay success"));
-                } else {
+                }else {
                     orders.setStatus("2");
                     orders.update();
                     return ok(Json.newObject().put("message", "order create success but pay fail"));
@@ -183,16 +182,15 @@ public class OrdersController extends Controller {
 
     public Result showOrderListForBackend() {
         JsonNode parameter = request().body().asJson();
-        if (!parameter.has("user_uuid") || !parameter.has("index")) {
-            return ok(Json.toJson(ErrorMessage.NOT_ENOUGH_PARAMETERS.toErrorMap()));
+        if (!parameter.has("user_uuid")) {
+            return ok(Json.newObject().put("error_code", "00001"));
         }
         String userUUID = parameter.get("user_uuid").asText();
-        int index = parameter.get("index").asInt();
         BackendUser backendUser = BackendUser.findBackendUserByUUID(userUUID);
         if (backendUser == null) {
-            return ok(Json.toJson(ErrorMessage.ACCOUNT_NOT_FOUNT.toErrorMap()));
+            return ok(Json.newObject().put("message", "id is not exist"));
         }
-        List<Orders> ordersList = Orders.findOrderListWithIndex(index);
+        List<Orders> ordersList = Orders.findOrdersList();
         ObjectNode response = new ObjectNode(JsonNodeFactory.instance);
         ArrayNode arrayNode = response.putArray("data");
         for (Orders orders : ordersList) {
