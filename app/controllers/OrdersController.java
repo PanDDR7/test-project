@@ -181,6 +181,7 @@ public class OrdersController extends Controller {
     }
 
     public Result showOrderListForBackend() {
+        Logger.debug("hello");
         JsonNode parameter = request().body().asJson();
         if (!parameter.has("user_uuid")) {
             return ok(Json.newObject().put("error_code", "00001"));
