@@ -13,7 +13,7 @@ libraryDependencies += guice
 libraryDependencies ++= Seq(
   javaJdbc,
   ws,
-  "mysql" % "mysql-connector-java" % "8.0.16",
+  "mysql" % "mysql-connector-java" % "8.0.13",
   "org.mariadb.jdbc" % "mariadb-java-client" % "1.4.4"
 )
 playEbeanModels in Compile := Seq("models.*")
