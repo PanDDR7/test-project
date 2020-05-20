@@ -97,11 +97,11 @@ public class OrdersController extends Controller {
         orders.setUserId(frontUser.getUserId());
         orders.setUserUUID(frontUser.getUserUUID());
         orders.setTotalAmount(sum);
-        orders.setStatus("0");
+        orders.setStatus(OrderStatus.other.getCode());
         orders.save();
         int orderId = orders.getId();
-        OrdersDetails ordersDetails = new OrdersDetails();
         for (ShoppingCart shoppingCart : shoppingCartList) {
+            OrdersDetails ordersDetails = new OrdersDetails();
             ordersDetails.setOrderId(orderId);
             ordersDetails.setProductId(shoppingCart.getProductId());
             ordersDetails.setProductName(shoppingCart.getProductName());
@@ -109,7 +109,6 @@ public class OrdersController extends Controller {
             ordersDetails.setPrice(shoppingCart.getPrice());
             ordersDetails.setTotalAmount(shoppingCart.getTotalAmount());
             ordersDetails.save();
-            ordersDetails = new OrdersDetails();
             shoppingCart.delete();
         }
         JsonNode request = Json.newObject().put("total_amount", sum);
@@ -182,6 +181,7 @@ public class OrdersController extends Controller {
 
     public Result showOrderListForBackend() {
         JsonNode parameter = request().body().asJson();
+        Logger.debug("{}",request().body().asJson());
         if (!parameter.has("user_uuid")) {
             return ok(Json.newObject().put("error_code", "00001"));
         }
