@@ -1,23 +1,11 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.mysql.cj.xdevapi.JsonArray;
 import dataTypes.ErrorMessage;
-import io.ebean.Ebean;
-import io.ebean.EbeanServer;
-import io.ebean.Model;
 import models.BackendUser;
-import models.ShoppingCart;
-import models.User;
 import play.libs.Json;
-import models.Product;
 import play.mvc.Controller;
 import play.mvc.Result;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 
