@@ -2,19 +2,21 @@ package dataTypes;
 
 public enum OrderStatus {
 
-    other("確認中"),process("進行中"),success("成功"),fail("失敗");
+    other("0", "確認中"), process("1", "進行中"), success("2", "成功"), fail("3", "失敗");
 
     private String status;
+    private String code;
 
-    OrderStatus(String status){
-        this.status=status;
+    OrderStatus(String code, String status) {
+        this.status = status;
+        this.code = code;
     }
 
-    public static OrderStatus setStatus(String input){
-        if(input==null){
+    public static OrderStatus setStatus(String input) {
+        if (input == null) {
             return other;
         }
-        switch (input){
+        switch (input) {
             case "0":
                 return process;
             case "1":
@@ -26,7 +28,15 @@ public enum OrderStatus {
         }
     }
 
-    public String getStatus(){
+    public String getStatus() {
         return this.status;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }
